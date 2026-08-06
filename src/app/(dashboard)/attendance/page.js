@@ -29,7 +29,7 @@ export default function AttendanceMatrix() {
     setLoading(true);
     const dateStr = date.toISOString().split('T')[0];
 
-    const { data: laborersData } = await supabase.from('laborers').select('id, full_name, role').eq('is_active', true);
+    const { data: laborersData } = await supabase.from('laborers').select('id, full_name').eq('is_active', true);
     if (laborersData) setLaborers(laborersData);
 
     const { data: attendanceData } = await supabase.from('attendance').select('*').eq('date', dateStr);
