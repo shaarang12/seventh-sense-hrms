@@ -84,7 +84,7 @@ export default function DashboardOverview() {
             newActivities.push({
               id: `reg-${l.id}`,
               type: 'registration',
-              message: `${l.full_name} was registered as a ${l.role}`,
+              message: `${l.full_name} was registered`,
               date: cDate
             });
           }

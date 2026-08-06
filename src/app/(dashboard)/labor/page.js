@@ -18,7 +18,6 @@ export default function LaborRegistry() {
   const [formData, setFormData] = useState({
     full_name: '',
     mobile_number: '',
-    role: '',
     wage_type: 'daily',
     rate_value: '',
   });
@@ -66,7 +65,6 @@ export default function LaborRegistry() {
     setFormData({
       full_name: '',
       mobile_number: '',
-      role: '',
       wage_type: 'daily',
       rate_value: '',
     });
@@ -78,7 +76,6 @@ export default function LaborRegistry() {
     setFormData({
       full_name: laborer.full_name,
       mobile_number: laborer.mobile_number,
-      role: laborer.role,
       wage_type: laborer.wage_type,
       rate_value: laborer.rate_value,
     });
@@ -119,8 +116,7 @@ export default function LaborRegistry() {
   };
 
   const filteredLaborers = laborers.filter(l =>
-    l.full_name.toLowerCase().includes(search.toLowerCase()) ||
-    l.role.toLowerCase().includes(search.toLowerCase())
+    l.full_name.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -141,7 +137,7 @@ export default function LaborRegistry() {
           <Search size={18} className={styles.searchIcon} />
           <input
             type="text"
-            placeholder="Search by name or role..."
+            placeholder="Search by name..."
             className={`input ${styles.searchInput}`}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -157,7 +153,7 @@ export default function LaborRegistry() {
             <table>
               <thead>
                 <tr>
-                  <th>Name & Role</th>
+                  <th>Name</th>
                   <th>Contact</th>
                   <th>Wage Rate</th>
                   <th>Leaves (SL/CL)</th>
@@ -171,7 +167,6 @@ export default function LaborRegistry() {
                     <tr key={laborer.id}>
                       <td>
                         <div className="font-semibold">{laborer.full_name}</div>
-                        <div className="text-secondary text-sm">{laborer.role}</div>
                       </td>
                       <td>{laborer.mobile_number}</td>
                       <td>
@@ -248,16 +243,7 @@ export default function LaborRegistry() {
                 />
               </div>
 
-              <div className={styles.inputGroup}>
-                <label className={styles.label}>Role</label>
-                <input
-                  type="text"
-                  className="input"
-                  required
-                  value={formData.role}
-                  onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                />
-              </div>
+
 
               <div className={styles.rowGroup}>
                 <div className={styles.inputGroup}>

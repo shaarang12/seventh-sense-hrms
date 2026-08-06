@@ -169,7 +169,6 @@ export default function AttendanceMatrix() {
                     <tr key={laborer.id}>
                       <td className={styles.nameCol}>
                         <div className="font-semibold">{laborer.full_name}</div>
-                        <div className="text-secondary text-sm">{laborer.role}</div>
                       </td>
                       <td>
                         <div className={styles.statusSelector}>
