@@ -1,0 +1,79 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.filterGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--bg-secondary);
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+}
+
+.filterSelect {
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-weight: 500;
+  padding: 0.25rem 0.5rem;
+  height: auto;
+}
+
+.filterSelect:focus {
+  outline: none;
+  border: none;
+}
+
+.summaryCards {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  margin-bottom: 2rem;
+}
+
+.grandTotal {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--accent-primary);
+  margin-top: 0.5rem;
+  text-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+}
+
+.amountCol {
+  text-align: right;
+}
+
+.otTags {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.otTier1, .otTier2 {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+}
+
+.otTier1 {
+  background-color: rgba(245, 158, 11, 0.1); /* warning bg */
+  color: var(--warning);
+}
+
+.otTier2 {
+  background-color: rgba(239, 68, 68, 0.1); /* danger bg */
+  color: var(--danger);
+}

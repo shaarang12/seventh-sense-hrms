@@ -1,0 +1,196 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.dateControls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background-color: var(--bg-secondary);
+  padding: 0.5rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+}
+
+.currentDate {
+  font-weight: 600;
+  min-width: 150px;
+  text-align: center;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+/* Toggle Switch */
+.holidayToggle {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 0.75rem;
+}
+
+.holidayToggle input {
+  display: none;
+}
+
+.toggleSlider {
+  position: relative;
+  width: 48px;
+  height: 24px;
+  background-color: var(--bg-tertiary);
+  border-radius: 999px;
+  transition: .4s;
+  border: 1px solid var(--border-color);
+}
+
+.toggleSlider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 2px;
+  bottom: 2px;
+  background-color: var(--text-secondary);
+  transition: .4s;
+  border-radius: 50%;
+}
+
+.holidayToggle input:checked + .toggleSlider {
+  background-color: var(--success);
+  border-color: var(--success);
+}
+
+.holidayToggle input:checked + .toggleSlider:before {
+  transform: translateX(24px);
+  background-color: white;
+}
+
+.toggleLabel {
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.holidayState {
+  text-align: center;
+  padding: 4rem 2rem;
+  background-color: rgba(16, 185, 129, 0.05);
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--success);
+}
+
+.holidayState h3 {
+  color: var(--success);
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.holidayState p {
+  color: var(--text-secondary);
+}
+
+.matrixTable th, .matrixTable td {
+  padding: 0.75rem 0.5rem;
+  vertical-align: middle;
+}
+
+.nameCol {
+  min-width: 200px;
+}
+
+.otCol {
+  width: 120px;
+  text-align: center;
+}
+
+.otInput {
+  text-align: center;
+  height: 2rem;
+}
+
+.statusSelector {
+  display: flex;
+  gap: 0.25rem;
+  background-color: var(--bg-tertiary);
+  padding: 0.25rem;
+  border-radius: var(--radius-md);
+  width: max-content;
+}
+
+.statusBtn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.125rem;
+}
+
+.statusShort {
+  font-size: 0.875rem;
+}
+
+.statusLabel {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .statusSelector {
+    gap: 0.5rem;
+  }
+  .statusBtn {
+    flex-direction: row;
+    gap: 0.5rem;
+  }
+  .statusLabel {
+    display: block;
+  }
+}
+
+.statusBtn:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.statusBtnActive {
+  color: white;
+}
+
+.status_present {
+  background-color: var(--success);
+}
+
+.status_absent {
+  background-color: var(--danger);
+}
+
+.status_half_day {
+  background-color: var(--warning);
+}
+
+.status_sl {
+  background-color: var(--accent-primary);
+}
+
+.status_cl {
+  background-color: #8b5cf6; /* purple */
+}
