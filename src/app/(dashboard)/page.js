@@ -12,6 +12,7 @@ export default function DashboardOverview() {
     pendingPayouts: 0,
     nextHoliday: 'None'
   });
+  const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -51,19 +52,86 @@ export default function DashboardOverview() {
         nextHolStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
       }
 
-      // 4. Calculate Payouts for the current month
-      const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0];
-      const { data: monthAttendance } = await supabase
+      // 4. Calculate Payouts for the current week (Monday to Saturday)
+      const now = new Date();
+      const currentDay = now.getDay();
+      const daysToMonday = currentDay === 0 ? 6 : currentDay - 1;
+      const startOfWeekDate = new Date(now);
+      startOfWeekDate.setDate(now.getDate() - daysToMonday);
+      const startOfWeek = startOfWeekDate.toISOString().split('T')[0];
+      
+      const { data: weekAttendance } = await supabase
         .from('attendance')
         .select('*')
-        .gte('date', startOfMonth)
+        .gte('date', startOfWeek)
         .lte('date', today);
         
       let totalPayouts = 0;
-      if (laborers && monthAttendance) {
-        const payouts = aggregatePayouts(laborers, monthAttendance);
+      if (laborers && weekAttendance) {
+        const payouts = aggregatePayouts(laborers, weekAttendance);
         totalPayouts = payouts.reduce((sum, p) => sum + p.totalNetPayable, 0);
       }
+
+      // Generate Recent Activities
+      const newActivities = [];
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(now.getDate() - 7);
+      
+      if (laborers) {
+        laborers.forEach(l => {
+          const cDate = new Date(l.created_at);
+          if (cDate >= sevenDaysAgo) {
+            newActivities.push({
+              id: `reg-${l.id}`,
+              type: 'registration',
+              message: `${l.full_name} was registered as a ${l.role}`,
+              date: cDate
+            });
+          }
+        });
+      }
+
+      if (weekAttendance && laborers) {
+        const laborerMap = {};
+        laborers.forEach(l => laborerMap[l.id] = l.full_name);
+
+        weekAttendance.forEach(a => {
+          const aDate = new Date(a.date);
+          if (a.status === 'sl' || a.status === 'cl') {
+            newActivities.push({
+              id: `leave-${a.id}`,
+              type: 'leave',
+              message: `${laborerMap[a.laborer_id]} took a ${a.status.toUpperCase()}`,
+              date: aDate
+            });
+          }
+          if (a.overtime_hours > 0) {
+            newActivities.push({
+              id: `ot-${a.id}`,
+              type: 'overtime',
+              message: `${laborerMap[a.laborer_id]} logged ${a.overtime_hours} hrs overtime`,
+              date: aDate
+            });
+          }
+        });
+      }
+
+      if (holidays && holidays.length > 0) {
+        const hDate = new Date(holidays[0].date);
+        const next7Days = new Date(now);
+        next7Days.setDate(now.getDate() + 7);
+        if (hDate <= next7Days && hDate >= now) {
+          newActivities.push({
+            id: `hol-${holidays[0].id}`,
+            type: 'holiday',
+            message: `Upcoming Holiday: ${holidays[0].description}`,
+            date: hDate
+          });
+        }
+      }
+
+      newActivities.sort((a, b) => b.date - a.date);
+      setActivities(newActivities.slice(0, 5));
 
       setStats({
         activeLaborers,
@@ -99,7 +167,7 @@ export default function DashboardOverview() {
           </p>
         </div>
         <div className="card">
-          <h3 className="text-secondary">Month Payouts</h3>
+          <h3 className="text-secondary">Weekly Payouts</h3>
           <p className={styles.statValue}>
             {loading ? '...' : `₹${stats.pendingPayouts.toFixed(2)}`}
           </p>
@@ -115,7 +183,25 @@ export default function DashboardOverview() {
       <div className={styles.recentActivity}>
         <h2 className="text-2xl font-semibold mb-4">Recent Activity</h2>
         <div className="card">
-          <p className="text-secondary">No recent activity to show right now.</p>
+          {loading ? (
+             <p className="text-secondary">Loading activity...</p>
+          ) : activities.length > 0 ? (
+            <ul className={styles.activityList}>
+              {activities.map(act => (
+                <li key={act.id} className={styles.activityItem}>
+                  <div className={styles.activityIcon}>
+                     {act.type === 'registration' ? '👤' : act.type === 'leave' ? '🤒' : act.type === 'overtime' ? '⏱️' : '🌴'}
+                  </div>
+                  <div>
+                    <p>{act.message}</p>
+                    <span className="text-xs text-secondary">{act.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-secondary">No recent activity to show right now.</p>
+          )}
         </div>
       </div>
     </div>
