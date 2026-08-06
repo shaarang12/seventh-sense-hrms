@@ -55,10 +55,16 @@ export default function AttendanceMatrix() {
   };
 
   const handleStatusChange = (laborerId, status) => {
-    setAttendance(prev => ({
-      ...prev,
-      [laborerId]: { ...prev[laborerId], status }
-    }));
+    setAttendance(prev => {
+      const updated = { ...prev[laborerId], status };
+      if (['absent', 'sl', 'cl'].includes(status)) {
+        updated.overtime = 0;
+      }
+      return {
+        ...prev,
+        [laborerId]: updated
+      };
+    });
   };
 
   const handleOvertimeChange = (laborerId, overtime) => {
@@ -194,7 +200,7 @@ export default function AttendanceMatrix() {
                           placeholder="0"
                           value={currentOT}
                           onChange={(e) => handleOvertimeChange(laborer.id, e.target.value)}
-                          disabled={currentStatus === 'absent'}
+                          disabled={['absent', 'sl', 'cl'].includes(currentStatus)}
                         />
                       </td>
                     </tr>
