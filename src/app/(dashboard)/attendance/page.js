@@ -161,7 +161,7 @@ export default function AttendanceMatrix() {
             <table className={styles.matrixTable}>
               <thead>
                 <tr>
-                  <th className={styles.nameCol}>Laborer</th>
+                  <th className={styles.nameCol}>Worker</th>
                   <th>Attendance Status</th>
                   <th className={styles.otCol}>Overtime (Hrs)</th>
                 </tr>

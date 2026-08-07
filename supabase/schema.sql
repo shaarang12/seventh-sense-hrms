@@ -3,7 +3,7 @@ CREATE TABLE public.laborers (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     full_name TEXT NOT NULL,
     mobile_number TEXT NOT NULL,
-    wage_type TEXT CHECK (wage_type IN ('daily', 'hourly')) NOT NULL,
+    wage_type TEXT CHECK (wage_type IN ('daily', 'hourly', 'monthly')) NOT NULL,
     rate_value NUMERIC NOT NULL,
     joining_date DATE NOT NULL DEFAULT CURRENT_DATE,
     sl_balance NUMERIC NOT NULL DEFAULT 12,

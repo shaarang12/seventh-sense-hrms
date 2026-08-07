@@ -123,12 +123,12 @@ export default function LaborRegistry() {
     <div className="container relative">
       <div className={styles.header}>
         <div>
-          <h1 className="text-2xl font-bold">Labor Registry</h1>
-          <p className="text-secondary">Manage laborer profiles and leave balances.</p>
+          <h1 className="text-2xl font-bold">Worker Registry</h1>
+          <p className="text-secondary">Manage worker profiles and leave balances.</p>
         </div>
         <button className="btn btn-primary" onClick={openAddModal}>
           <Plus size={18} className="mr-2" />
-          Add Laborer
+          Add Worker
         </button>
       </div>
 
@@ -172,6 +172,8 @@ export default function LaborRegistry() {
                       <td>
                         {laborer.wage_type === 'hourly'
                           ? `₹${laborer.rate_value}/hr`
+                          : laborer.wage_type === 'monthly'
+                          ? `₹${laborer.rate_value}/month`
                           : `₹${laborer.rate_value}/day`}
                       </td>
                       <td>
@@ -200,7 +202,7 @@ export default function LaborRegistry() {
                 ) : (
                   <tr>
                     <td colSpan="6" className="text-center py-8 text-secondary">
-                      No laborers found matching your search.
+                      No workers found matching your search.
                     </td>
                   </tr>
                 )}
@@ -214,7 +216,7 @@ export default function LaborRegistry() {
         <div className={styles.modalOverlay}>
           <div className={styles.modalContent}>
             <div className={styles.modalHeader}>
-              <h2 className="text-xl font-bold">{editingLaborer ? 'Edit Laborer' : 'Add Laborer'}</h2>
+              <h2 className="text-xl font-bold">{editingLaborer ? 'Edit Worker' : 'Add Worker'}</h2>
               <button className={styles.closeBtn} onClick={() => setIsModalOpen(false)}>
                 <X size={20} />
               </button>
@@ -255,6 +257,7 @@ export default function LaborRegistry() {
                   >
                     <option value="daily">Daily</option>
                     <option value="hourly">Hourly</option>
+                    <option value="monthly">Monthly</option>
                   </select>
                 </div>
 

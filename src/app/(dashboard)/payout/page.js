@@ -36,7 +36,7 @@ export default function SalaryDashboard() {
   const exportCSV = () => {
     if (payouts.length === 0) return;
     
-    const headers = ['Laborer Name', 'Role', 'Days Worked', 'Leaves Used', 'Tier 1 OT', 'Tier 2 OT', 'Base Pay', 'OT Pay', 'Total Net Payable'];
+    const headers = ['Worker Name', 'Role', 'Days Worked', 'Leaves Used', 'Tier 1 OT', 'Tier 2 OT', 'Base Pay', 'OT Pay', 'Total Net Payable'];
     const rows = payouts.map(p => [
       p.laborer.full_name,
       p.laborer.role,
@@ -106,7 +106,7 @@ export default function SalaryDashboard() {
             <table>
               <thead>
                 <tr>
-                  <th>Laborer</th>
+                  <th>Worker</th>
                   <th>Attendance</th>
                   <th>Overtime (1.0x / 1.5x)</th>
                   <th>Base Pay</th>

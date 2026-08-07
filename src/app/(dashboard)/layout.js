@@ -9,7 +9,7 @@ import styles from './dashboardLayout.module.css';
 
 const navItems = [
   { name: 'Dashboard', href: '/', icon: LayoutDashboard },
-  { name: 'Labor Registry', href: '/labor', icon: Users },
+  { name: 'Worker Registry', href: '/worker', icon: Users },
   { name: 'Attendance', href: '/attendance', icon: CalendarDays },
   { name: 'Payouts', href: '/payout', icon: Wallet },
   { name: 'Settings', href: '/settings', icon: Settings },

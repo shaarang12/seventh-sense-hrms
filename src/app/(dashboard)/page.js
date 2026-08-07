@@ -7,7 +7,7 @@ import styles from './page.module.css';
 
 export default function DashboardOverview() {
   const [stats, setStats] = useState({
-    activeLaborers: 0,
+    activeWorkers: 0,
     attendanceToday: 0,
     pendingPayouts: 0,
     nextHoliday: 'None'
@@ -21,13 +21,13 @@ export default function DashboardOverview() {
       
       const today = new Date().toISOString().split('T')[0];
       
-      // 1. Fetch active laborers count
-      const { data: laborers } = await supabase
+      // 1. Fetch active workers count
+      const { data: workers } = await supabase
         .from('laborers')
         .select('*')
         .eq('is_active', true);
         
-      const activeLaborers = laborers ? laborers.length : 0;
+      const activeWorkers = workers ? workers.length : 0;
       
       // 2. Fetch today's attendance
       const { data: attendanceToday } = await supabase
@@ -67,8 +67,8 @@ export default function DashboardOverview() {
         .lte('date', today);
         
       let totalPayouts = 0;
-      if (laborers && weekAttendance) {
-        const payouts = aggregatePayouts(laborers, weekAttendance);
+      if (workers && weekAttendance) {
+        const payouts = aggregatePayouts(workers, weekAttendance);
         totalPayouts = payouts.reduce((sum, p) => sum + p.totalNetPayable, 0);
       }
 
@@ -77,8 +77,8 @@ export default function DashboardOverview() {
       const sevenDaysAgo = new Date();
       sevenDaysAgo.setDate(now.getDate() - 7);
       
-      if (laborers) {
-        laborers.forEach(l => {
+      if (workers) {
+        workers.forEach(l => {
           const cDate = new Date(l.created_at);
           if (cDate >= sevenDaysAgo) {
             newActivities.push({
@@ -91,9 +91,9 @@ export default function DashboardOverview() {
         });
       }
 
-      if (weekAttendance && laborers) {
-        const laborerMap = {};
-        laborers.forEach(l => laborerMap[l.id] = l.full_name);
+      if (weekAttendance && workers) {
+        const workerMap = {};
+        workers.forEach(l => workerMap[l.id] = l.full_name);
 
         weekAttendance.forEach(a => {
           const aDate = new Date(a.date);
@@ -101,7 +101,7 @@ export default function DashboardOverview() {
             newActivities.push({
               id: `leave-${a.id}`,
               type: 'leave',
-              message: `${laborerMap[a.laborer_id]} took a ${a.status.toUpperCase()}`,
+              message: `${workerMap[a.laborer_id]} took a ${a.status.toUpperCase()}`,
               date: aDate
             });
           }
@@ -109,7 +109,7 @@ export default function DashboardOverview() {
             newActivities.push({
               id: `ot-${a.id}`,
               type: 'overtime',
-              message: `${laborerMap[a.laborer_id]} logged ${a.overtime_hours} hrs overtime`,
+              message: `${workerMap[a.laborer_id]} logged ${a.overtime_hours} hrs overtime`,
               date: aDate
             });
           }
@@ -134,7 +134,7 @@ export default function DashboardOverview() {
       setActivities(newActivities.slice(0, 5));
 
       setStats({
-        activeLaborers,
+        activeWorkers,
         attendanceToday: presentCount,
         pendingPayouts: totalPayouts,
         nextHoliday: nextHolStr
@@ -155,15 +155,15 @@ export default function DashboardOverview() {
 
       <div className={styles.statsGrid}>
         <div className="card">
-          <h3 className="text-secondary">Active Laborers</h3>
+          <h3 className="text-secondary">Active Workers</h3>
           <p className={styles.statValue}>
-            {loading ? '...' : stats.activeLaborers}
+            {loading ? '...' : stats.activeWorkers}
           </p>
         </div>
         <div className="card">
           <h3 className="text-secondary">Today's Attendance</h3>
           <p className={styles.statValue}>
-            {loading ? '...' : `${stats.attendanceToday} / ${stats.activeLaborers}`}
+            {loading ? '...' : `${stats.attendanceToday} / ${stats.activeWorkers}`}
           </p>
         </div>
         <div className="card">

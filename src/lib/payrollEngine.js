@@ -8,6 +8,9 @@ export const calculateDailyPay = (laborer, attendanceRecord) => {
   if (wage_type === 'hourly') {
     hourlyRate = rate_value;
     dailyWage = rate_value * 8;
+  } else if (wage_type === 'monthly') {
+    dailyWage = rate_value / 26;
+    hourlyRate = dailyWage / 8;
   } else {
     dailyWage = rate_value;
     hourlyRate = rate_value / 8;
