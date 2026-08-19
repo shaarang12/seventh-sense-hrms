@@ -62,7 +62,7 @@ export const calculateDailyPay = (laborer, attendanceRecord) => {
   };
 };
 
-export const aggregatePayouts = (laborers, attendanceRecords) => {
+export const aggregatePayouts = (laborers, attendanceRecords, allowances = []) => {
   const payouts = {};
 
   laborers.forEach(l => {
@@ -76,6 +76,7 @@ export const aggregatePayouts = (laborers, attendanceRecords) => {
       basePayBreakdown: 0,
       tier1OTPayBreakdown: 0,
       tier2OTPayBreakdown: 0,
+      totalAllowances: 0,
       totalNetPayable: 0,
     };
   });
@@ -103,6 +104,15 @@ export const aggregatePayouts = (laborers, attendanceRecords) => {
     payout.tier2OTPayBreakdown += dailyCalc.tier2OTPay;
     
     payout.totalNetPayable += dailyCalc.totalDailyPay;
+  });
+
+  allowances.forEach(allowance => {
+    const laborer = laborers.find(l => l.id === allowance.laborer_id);
+    if (!laborer) return;
+
+    const payout = payouts[laborer.id];
+    payout.totalAllowances += Number(allowance.amount);
+    payout.totalNetPayable += Number(allowance.amount);
   });
 
   return Object.values(payouts);

@@ -4,13 +4,14 @@ import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
-import { LayoutDashboard, Users, CalendarDays, Wallet, Settings, LogOut, Menu } from 'lucide-react';
+import { LayoutDashboard, Users, CalendarDays, Wallet, Settings, LogOut, Menu, Banknote } from 'lucide-react';
 import styles from './dashboardLayout.module.css';
 
 const navItems = [
   { name: 'Dashboard', href: '/', icon: LayoutDashboard },
   { name: 'Worker Registry', href: '/worker', icon: Users },
   { name: 'Attendance', href: '/attendance', icon: CalendarDays },
+  { name: 'Allowances', href: '/allowance', icon: Banknote },
   { name: 'Payouts', href: '/payout', icon: Wallet },
   { name: 'Settings', href: '/settings', icon: Settings },
 ];

@@ -31,6 +31,16 @@ CREATE TABLE public.holidays (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- Create allowances table
+CREATE TABLE public.allowances (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    laborer_id UUID REFERENCES public.laborers(id) ON DELETE CASCADE,
+    amount NUMERIC NOT NULL,
+    description TEXT NOT NULL,
+    date DATE NOT NULL DEFAULT CURRENT_DATE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
 -- Setup Row Level Security (RLS)
 -- Since this is an internal admin app, we can either disable RLS or write simple policies allowing authenticated users.
 -- For simplicity, we'll allow all operations to authenticated users.
@@ -38,6 +48,7 @@ CREATE TABLE public.holidays (
 ALTER TABLE public.laborers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.attendance ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.holidays ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.allowances ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Allow full access to authenticated users on laborers"
     ON public.laborers
@@ -53,6 +64,12 @@ CREATE POLICY "Allow full access to authenticated users on attendance"
 
 CREATE POLICY "Allow full access to authenticated users on holidays"
     ON public.holidays
+    FOR ALL
+    TO authenticated
+    USING (true);
+
+CREATE POLICY "Allow full access to authenticated users on allowances"
+    ON public.allowances
     FOR ALL
     TO authenticated
     USING (true);

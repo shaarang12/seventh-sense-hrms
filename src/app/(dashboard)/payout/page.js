@@ -21,22 +21,23 @@ export default function SalaryDashboard() {
     // In a real implementation, you would calculate date ranges based on filterPeriod
     // and fetch only those attendance records from Supabase.
     // For now, simulating fetching all recent records.
-    
+
     const { data: laborers } = await supabase.from('laborers').select('*');
     const { data: attendanceRecords } = await supabase.from('attendance').select('*');
-    
+    const { data: allowances } = await supabase.from('allowances').select('*');
+
     if (laborers && attendanceRecords) {
-      const aggregated = aggregatePayouts(laborers, attendanceRecords);
+      const aggregated = aggregatePayouts(laborers, attendanceRecords, allowances || []);
       setPayouts(aggregated);
     }
-    
+
     setLoading(false);
   };
 
   const exportCSV = () => {
     if (payouts.length === 0) return;
-    
-    const headers = ['Worker Name', 'Role', 'Days Worked', 'Leaves Used', 'Tier 1 OT', 'Tier 2 OT', 'Base Pay', 'OT Pay', 'Total Net Payable'];
+
+    const headers = ['Worker Name', 'Role', 'Days Worked', 'Leaves Used', 'Tier 1 OT', 'Tier 2 OT', 'Base Pay', 'OT Pay', 'Allowances', 'Total Net Payable'];
     const rows = payouts.map(p => [
       p.laborer.full_name,
       p.laborer.role,
@@ -46,6 +47,7 @@ export default function SalaryDashboard() {
       p.totalTier2OTHours,
       `₹${p.basePayBreakdown.toFixed(2)}`,
       `₹${(p.tier1OTPayBreakdown + p.tier2OTPayBreakdown).toFixed(2)}`,
+      `₹${p.totalAllowances.toFixed(2)}`,
       `₹${p.totalNetPayable.toFixed(2)}`
     ]);
 
@@ -70,11 +72,11 @@ export default function SalaryDashboard() {
           <h1 className="text-2xl font-bold">Salary & Payout Dashboard</h1>
           <p className="text-secondary">Review aggregated metrics and export payroll data.</p>
         </div>
-        
+
         <div className={styles.actions}>
           <div className={styles.filterGroup}>
             <Filter size={18} className="text-secondary" />
-            <select 
+            <select
               className={`input ${styles.filterSelect}`}
               value={filterPeriod}
               onChange={(e) => setFilterPeriod(e.target.value)}
@@ -111,6 +113,7 @@ export default function SalaryDashboard() {
                   <th>Overtime (1.0x / 1.5x)</th>
                   <th>Base Pay</th>
                   <th>OT Pay</th>
+                  <th>Allowances</th>
                   <th className={styles.amountCol}>Net Payable</th>
                 </tr>
               </thead>
@@ -133,13 +136,14 @@ export default function SalaryDashboard() {
                     </td>
                     <td>₹{p.basePayBreakdown.toFixed(2)}</td>
                     <td>₹{(p.tier1OTPayBreakdown + p.tier2OTPayBreakdown).toFixed(2)}</td>
+                    <td className="text-primary font-medium">₹{p.totalAllowances.toFixed(2)}</td>
                     <td className={`${styles.amountCol} font-bold text-accent-primary`}>
                       ₹{p.totalNetPayable.toFixed(2)}
                     </td>
                   </tr>
                 )) : (
                   <tr>
-                    <td colSpan="6" className="text-center py-8 text-secondary">
+                    <td colSpan="7" className="text-center py-8 text-secondary">
                       No records found for this period.
                     </td>
                   </tr>
