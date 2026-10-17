@@ -131,14 +131,8 @@ export default function SettingsPage() {
           </div>
           <div className={styles.settingRow}>
             <div>
-              <div className="font-medium">Overtime Tier 1 (1.0x)</div>
-              <div className="text-sm text-secondary">Up to 2 hours / day</div>
-            </div>
-          </div>
-          <div className={styles.settingRow}>
-            <div>
-              <div className="font-medium">Overtime Tier 2 (1.5x)</div>
-              <div className="text-sm text-secondary">Above 2 hours / day</div>
+              <div className="font-medium">Overtime Rate (1.0x)</div>
+              <div className="text-sm text-secondary">Standard hourly wage for all overtime hours</div>
             </div>
           </div>
         </div>

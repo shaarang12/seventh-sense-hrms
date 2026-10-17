@@ -37,16 +37,15 @@ export default function SalaryDashboard() {
   const exportCSV = () => {
     if (payouts.length === 0) return;
 
-    const headers = ['Worker Name', 'Role', 'Days Worked', 'Leaves Used', 'Tier 1 OT', 'Tier 2 OT', 'Base Pay', 'OT Pay', 'Allowances', 'Total Net Payable'];
+    const headers = ['Worker Name', 'Role', 'Days Worked', 'Leaves Used', 'Overtime (Hrs)', 'Base Pay', 'OT Pay', 'Allowances', 'Total Net Payable'];
     const rows = payouts.map(p => [
       p.laborer.full_name,
       p.laborer.role,
       p.totalDaysWorked,
       p.totalPaidLeavesUsed,
-      p.totalTier1OTHours,
-      p.totalTier2OTHours,
+      p.totalOvertimeHours ?? p.totalTier1OTHours,
       `₹${p.basePayBreakdown.toFixed(2)}`,
-      `₹${(p.tier1OTPayBreakdown + p.tier2OTPayBreakdown).toFixed(2)}`,
+      `₹${(p.overtimePayBreakdown ?? (p.tier1OTPayBreakdown + p.tier2OTPayBreakdown)).toFixed(2)}`,
       `₹${p.totalAllowances.toFixed(2)}`,
       `₹${p.totalNetPayable.toFixed(2)}`
     ]);
@@ -110,7 +109,7 @@ export default function SalaryDashboard() {
                 <tr>
                   <th>Worker</th>
                   <th>Attendance</th>
-                  <th>Overtime (1.0x / 1.5x)</th>
+                  <th>Overtime (1.0x)</th>
                   <th>Base Pay</th>
                   <th>OT Pay</th>
                   <th>Allowances</th>
@@ -130,12 +129,11 @@ export default function SalaryDashboard() {
                     </td>
                     <td>
                       <div className={styles.otTags}>
-                        <span className={styles.otTier1}>{p.totalTier1OTHours}h</span>
-                        <span className={styles.otTier2}>{p.totalTier2OTHours}h</span>
+                        <span className={styles.otTier1}>{(p.totalOvertimeHours ?? p.totalTier1OTHours)}h</span>
                       </div>
                     </td>
                     <td>₹{p.basePayBreakdown.toFixed(2)}</td>
-                    <td>₹{(p.tier1OTPayBreakdown + p.tier2OTPayBreakdown).toFixed(2)}</td>
+                    <td>₹{(p.overtimePayBreakdown ?? (p.tier1OTPayBreakdown + p.tier2OTPayBreakdown)).toFixed(2)}</td>
                     <td className="text-primary font-medium">₹{p.totalAllowances.toFixed(2)}</td>
                     <td className={`${styles.amountCol} font-bold text-accent-primary`}>
                       ₹{p.totalNetPayable.toFixed(2)}

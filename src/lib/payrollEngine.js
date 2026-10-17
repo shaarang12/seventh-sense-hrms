@@ -35,29 +35,20 @@ export const calculateDailyPay = (laborer, attendanceRecord) => {
 
   const regularDayPay = dailyWage * attendanceMultiplier;
 
-  let tier1OTHours = 0;
-  let tier2OTHours = 0;
+  const overtimeHours = Number(overtime_hours) > 0 ? Number(overtime_hours) : 0;
+  const overtimePay = overtimeHours * hourlyRate * 1.0;
 
-  if (overtime_hours > 0) {
-    if (overtime_hours <= 2) {
-      tier1OTHours = overtime_hours;
-    } else {
-      tier1OTHours = 2;
-      tier2OTHours = overtime_hours - 2;
-    }
-  }
-
-  const tier1OTPay = tier1OTHours * hourlyRate * 1.0;
-  const tier2OTPay = tier2OTHours * hourlyRate * 1.5;
-
-  const totalDailyPay = regularDayPay + tier1OTPay + tier2OTPay;
+  const totalDailyPay = regularDayPay + overtimePay;
 
   return {
     regularDayPay,
-    tier1OTHours,
-    tier1OTPay,
-    tier2OTHours,
-    tier2OTPay,
+    overtimeHours,
+    overtimePay,
+    // Kept for backward compatibility
+    tier1OTHours: overtimeHours,
+    tier1OTPay: overtimePay,
+    tier2OTHours: 0,
+    tier2OTPay: 0,
     totalDailyPay,
   };
 };
@@ -71,9 +62,11 @@ export const aggregatePayouts = (laborers, attendanceRecords, allowances = []) =
       totalDaysWorked: 0, // Present or Half Day
       totalPaidLeavesUsed: 0, // SL or CL
       totalHolidays: 0,
+      totalOvertimeHours: 0,
       totalTier1OTHours: 0,
       totalTier2OTHours: 0,
       basePayBreakdown: 0,
+      overtimePayBreakdown: 0,
       tier1OTPayBreakdown: 0,
       tier2OTPayBreakdown: 0,
       totalAllowances: 0,
@@ -96,10 +89,12 @@ export const aggregatePayouts = (laborers, attendanceRecords, allowances = []) =
       payout.totalHolidays += 1.0;
     }
 
+    payout.totalOvertimeHours += dailyCalc.overtimeHours;
     payout.totalTier1OTHours += dailyCalc.tier1OTHours;
     payout.totalTier2OTHours += dailyCalc.tier2OTHours;
     
     payout.basePayBreakdown += dailyCalc.regularDayPay;
+    payout.overtimePayBreakdown += dailyCalc.overtimePay;
     payout.tier1OTPayBreakdown += dailyCalc.tier1OTPay;
     payout.tier2OTPayBreakdown += dailyCalc.tier2OTPay;
     
