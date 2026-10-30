@@ -278,8 +278,6 @@ export default function LaborRegistry() {
                 />
               </div>
 
-
-
               <div className={styles.rowGroup}>
                 <div className={styles.inputGroup}>
                   <label className={styles.label}>Wage Type</label>
