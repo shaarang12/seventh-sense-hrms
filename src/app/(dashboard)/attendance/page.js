@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
-import { ChevronLeft, ChevronRight, Save } from 'lucide-react';
+import { Calendar, ChevronDown, Save } from 'lucide-react';
 import styles from './attendance.module.css';
 
 const STATUS_OPTIONS = [
@@ -13,21 +13,42 @@ const STATUS_OPTIONS = [
   { value: 'cl', label: 'Casual Leave', short: 'CL' },
 ];
 
+const getTodayDateStr = () => {
+  const d = new Date();
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+const formatDisplayDate = (dateStr) => {
+  if (!dateStr) return '';
+  const [year, month, day] = dateStr.split('-').map(Number);
+  const d = new Date(year, month - 1, day);
+  return d.toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric'
+  });
+};
+
 export default function AttendanceMatrix() {
-  const [date, setDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(getTodayDateStr);
   const [laborers, setLaborers] = useState([]);
   const [attendance, setAttendance] = useState({}); // { laborerId: { status, overtime } }
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [isHoliday, setIsHoliday] = useState(false);
+  const dateInputRef = useRef(null);
 
   useEffect(() => {
     fetchData();
-  }, [date]);
+  }, [selectedDate]);
 
   const fetchData = async () => {
     setLoading(true);
-    const dateStr = date.toISOString().split('T')[0];
+    const dateStr = selectedDate;
 
     const { data: laborersData } = await supabase.from('laborers').select('id, full_name').eq('is_active', true);
     if (laborersData) setLaborers(laborersData);
@@ -46,12 +67,6 @@ export default function AttendanceMatrix() {
     setIsHoliday(!!holidayData);
 
     setLoading(false);
-  };
-
-  const changeDate = (days) => {
-    const newDate = new Date(date);
-    newDate.setDate(date.getDate() + days);
-    setDate(newDate);
   };
 
   const handleStatusChange = (laborerId, status) => {
@@ -76,7 +91,7 @@ export default function AttendanceMatrix() {
 
   const saveAttendance = async () => {
     setSaving(true);
-    const dateStr = date.toISOString().split('T')[0];
+    const dateStr = selectedDate;
 
     const recordsToUpsert = laborers.map(laborer => ({
       laborer_id: laborer.id,
@@ -115,15 +130,56 @@ export default function AttendanceMatrix() {
         </div>
 
         <div className={styles.dateControls}>
-          <button className="btn btn-secondary" onClick={() => changeDate(-1)}>
-            <ChevronLeft size={20} />
-          </button>
-          <div className={styles.currentDate}>
-            {date.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' })}
+          <div
+            className={styles.calendarPicker}
+            onClick={() => {
+              try {
+                if (dateInputRef.current) {
+                  if (typeof dateInputRef.current.showPicker === 'function') {
+                    dateInputRef.current.showPicker();
+                  } else {
+                    dateInputRef.current.focus();
+                  }
+                }
+              } catch (_) {}
+            }}
+            title="Click to select date from calendar"
+          >
+            <Calendar size={18} className={styles.calendarIcon} />
+            <span className={styles.dateDisplay}>
+              {formatDisplayDate(selectedDate)}
+            </span>
+            <ChevronDown size={15} className={styles.chevronIcon} />
+            <input
+              ref={dateInputRef}
+              type="date"
+              className={styles.hiddenDateInput}
+              value={selectedDate}
+              onChange={(e) => {
+                if (e.target.value) {
+                  setSelectedDate(e.target.value);
+                }
+              }}
+              onClick={(e) => {
+                try {
+                  if (typeof e.target.showPicker === 'function') {
+                    e.target.showPicker();
+                  }
+                } catch (_) {}
+              }}
+            />
           </div>
-          <button className="btn btn-secondary" onClick={() => changeDate(1)}>
-            <ChevronRight size={20} />
-          </button>
+
+          {selectedDate !== getTodayDateStr() && (
+            <button
+              type="button"
+              className={`btn btn-secondary ${styles.todayBtn}`}
+              onClick={() => setSelectedDate(getTodayDateStr())}
+              title="Jump to today's date"
+            >
+              Today
+            </button>
+          )}
         </div>
       </div>
 
