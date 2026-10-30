@@ -20,6 +20,8 @@ export default function LaborRegistry() {
     mobile_number: '',
     wage_type: 'daily',
     rate_value: '',
+    sl_balance: 12,
+    cl_balance: 8,
   });
 
   useEffect(() => {
@@ -67,6 +69,8 @@ export default function LaborRegistry() {
       mobile_number: '',
       wage_type: 'daily',
       rate_value: '',
+      sl_balance: 12,
+      cl_balance: 8,
     });
     setIsModalOpen(true);
   };
@@ -78,6 +82,8 @@ export default function LaborRegistry() {
       mobile_number: laborer.mobile_number,
       wage_type: laborer.wage_type,
       rate_value: laborer.rate_value,
+      sl_balance: laborer.sl_balance !== undefined ? laborer.sl_balance : 12,
+      cl_balance: laborer.cl_balance !== undefined ? laborer.cl_balance : 8,
     });
     setIsModalOpen(true);
   };
@@ -85,26 +91,41 @@ export default function LaborRegistry() {
   const handleSave = async (e) => {
     e.preventDefault();
     
+    const payload = {
+      full_name: formData.full_name,
+      mobile_number: formData.mobile_number,
+      wage_type: formData.wage_type,
+      rate_value: Number(formData.rate_value),
+      sl_balance: Number(formData.sl_balance),
+      cl_balance: Number(formData.cl_balance),
+    };
+
     if (editingLaborer) {
       // Update
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('laborers')
-        .update({ ...formData, rate_value: Number(formData.rate_value) })
-        .eq('id', editingLaborer.id)
-        .select();
-      if (!error && data) {
-        setLaborers(laborers.map(l => l.id === editingLaborer.id ? data[0] : l));
+        .update(payload)
+        .eq('id', editingLaborer.id);
+      
+      if (error) {
+        console.error('Error updating worker:', error);
+        alert('Failed to update worker: ' + error.message);
+        return;
       }
     } else {
       // Add
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('laborers')
-        .insert([{ ...formData, rate_value: Number(formData.rate_value) }])
-        .select();
-      if (!error && data) {
-        setLaborers([...laborers, data[0]]);
+        .insert([payload]);
+
+      if (error) {
+        console.error('Error adding worker:', error);
+        alert('Failed to add worker: ' + error.message);
+        return;
       }
     }
+
+    await fetchLaborers();
     setIsModalOpen(false);
   };
 
@@ -178,8 +199,12 @@ export default function LaborRegistry() {
                       </td>
                       <td>
                         <div className={styles.leaveBalances}>
-                          <span className={`${styles.leaveTag} ${styles.slTag}`}>SL: {laborer.remaining_sl}</span>
-                          <span className={`${styles.leaveTag} ${styles.clTag}`}>CL: {laborer.remaining_cl}</span>
+                          <span className={`${styles.leaveTag} ${styles.slTag}`} title={`Total SL: ${laborer.sl_balance}`}>
+                            SL: {laborer.remaining_sl}/{laborer.sl_balance}
+                          </span>
+                          <span className={`${styles.leaveTag} ${styles.clTag}`} title={`Total CL: ${laborer.cl_balance}`}>
+                            CL: {laborer.remaining_cl}/{laborer.cl_balance}
+                          </span>
                         </div>
                       </td>
                       <td>
@@ -271,6 +296,34 @@ export default function LaborRegistry() {
                     step="0.01"
                     value={formData.rate_value}
                     onChange={(e) => setFormData({ ...formData, rate_value: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div className={styles.rowGroup}>
+                <div className={styles.inputGroup}>
+                  <label className={styles.label}>Sick Leaves (SL Balance)</label>
+                  <input
+                    type="number"
+                    className="input"
+                    required
+                    min="0"
+                    step="1"
+                    value={formData.sl_balance}
+                    onChange={(e) => setFormData({ ...formData, sl_balance: e.target.value })}
+                  />
+                </div>
+
+                <div className={styles.inputGroup}>
+                  <label className={styles.label}>Casual Leaves (CL Balance)</label>
+                  <input
+                    type="number"
+                    className="input"
+                    required
+                    min="0"
+                    step="1"
+                    value={formData.cl_balance}
+                    onChange={(e) => setFormData({ ...formData, cl_balance: e.target.value })}
                   />
                 </div>
               </div>
