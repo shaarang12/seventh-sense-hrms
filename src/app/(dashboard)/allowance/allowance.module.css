@@ -34,29 +34,35 @@
 /* Modal Styles */
 .modalOverlay {
   position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   z-index: 50;
   backdrop-filter: blur(4px);
+  padding: 1rem;
 }
 
 .modalContent {
-  background: var(--surface);
-  border-radius: 1rem;
-  padding: 2rem;
+  background-color: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
   width: 100%;
   max-width: 500px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  animation: modalEnter 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  animation: modalEnter 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes modalEnter {
   from {
     opacity: 0;
-    transform: scale(0.95) translateY(10px);
+    transform: scale(0.96) translateY(8px);
   }
   to {
     opacity: 1;
@@ -68,7 +74,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .closeBtn {
@@ -76,23 +83,23 @@
   border: none;
   color: var(--text-secondary);
   cursor: pointer;
-  padding: 0.5rem;
-  border-radius: 0.5rem;
-  transition: all 0.2s;
+  padding: 0.25rem;
+  border-radius: var(--radius-sm);
+  transition: color 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .closeBtn:hover {
-  background: var(--background);
   color: var(--text-primary);
 }
 
 .formGroup {
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1rem;
 }
 
 .inputGroup {
@@ -102,9 +109,12 @@
 }
 
 .rowGroup {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
   gap: 1rem;
+}
+
+.rowGroup > .inputGroup {
+  flex: 1;
 }
 
 .label {
@@ -118,14 +128,16 @@
   justify-content: flex-end;
   gap: 1rem;
   margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
 }
 
 .iconBtn {
-  background: var(--background);
-  border: 1px solid var(--border);
+  background: none;
+  border: none;
   color: var(--text-secondary);
-  padding: 0.5rem;
-  border-radius: 0.5rem;
+  padding: 0.25rem;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   transition: all 0.2s;
   display: flex;
@@ -134,13 +146,11 @@
 }
 
 .iconBtn:hover {
-  background: var(--surface);
-  color: var(--primary);
-  border-color: var(--primary);
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
 }
 
 .dangerIconBtn:hover {
+  background-color: var(--danger-bg);
   color: var(--danger);
-  border-color: var(--danger);
-  background: var(--danger-light, rgba(239, 68, 68, 0.1));
 }
