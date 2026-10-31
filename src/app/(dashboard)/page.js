@@ -68,7 +68,7 @@ export default function DashboardOverview() {
         
       let totalPayouts = 0;
       if (workers && weekAttendance) {
-        const payouts = aggregatePayouts(workers, weekAttendance);
+        const payouts = aggregatePayouts(workers, weekAttendance, [], { mode: 'daily_additive' });
         totalPayouts = payouts.reduce((sum, p) => sum + p.totalNetPayable, 0);
       }
 

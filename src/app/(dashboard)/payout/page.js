@@ -103,7 +103,7 @@ export default function SalaryDashboard() {
       .lte('date', range.endDate);
 
     if (laborers && attendanceRecords) {
-      const aggregated = aggregatePayouts(laborers, attendanceRecords, allowances || []);
+      const aggregated = aggregatePayouts(laborers, attendanceRecords, allowances || [], { mode: 'monthly' });
       setPayouts(aggregated);
     }
 
@@ -113,12 +113,26 @@ export default function SalaryDashboard() {
   const exportCSV = () => {
     if (payouts.length === 0) return;
 
-    const headers = ['Worker Name', 'Role/Type', 'Days Worked', 'Leaves Used', 'Overtime (Hrs)', 'Base Pay', 'OT Pay', 'Allowances', 'Total Net Payable'];
+    const headers = [
+      'Worker Name',
+      'Role/Type',
+      'Days Worked',
+      'Leaves Used',
+      'Absent Days',
+      'Absentee Deduction',
+      'Overtime (Hrs)',
+      'Base Pay',
+      'OT Pay',
+      'Allowances',
+      'Total Net Payable'
+    ];
     const rows = payouts.map(p => [
-      p.laborer.full_name,
-      p.laborer.role || p.laborer.wage_type,
+      `"${p.laborer.full_name}"`,
+      `"${p.laborer.role || p.laborer.wage_type}"`,
       p.totalDaysWorked,
       p.totalPaidLeavesUsed,
+      p.totalAbsentDays || 0,
+      `₹${(p.totalAbsenteeDeduction || 0).toFixed(2)}`,
       p.totalOvertimeHours ?? p.totalTier1OTHours,
       `₹${p.basePayBreakdown.toFixed(2)}`,
       `₹${(p.overtimePayBreakdown ?? (p.tier1OTPayBreakdown + p.tier2OTPayBreakdown)).toFixed(2)}`,
@@ -254,13 +268,24 @@ export default function SalaryDashboard() {
                     <td>
                       <div>Days: <span className="font-medium">{p.totalDaysWorked}</span></div>
                       <div className="text-sm text-secondary">Leaves: {p.totalPaidLeavesUsed}</div>
+                      {p.totalAbsentDays > 0 && (
+                        <div className="text-xs" style={{ color: 'var(--danger)' }}>Absent: {p.totalAbsentDays}d</div>
+                      )}
                     </td>
                     <td>
                       <div className={styles.otTags}>
                         <span className={styles.otTier1}>{(p.totalOvertimeHours ?? p.totalTier1OTHours)}h</span>
                       </div>
+                      {p.totalSundayOTHours > 0 && (
+                        <div className="text-xs text-secondary mt-1">incl. {p.totalSundayOTHours}h Sun</div>
+                      )}
                     </td>
-                    <td>₹{p.basePayBreakdown.toFixed(2)}</td>
+                    <td>
+                      <div>₹{p.basePayBreakdown.toFixed(2)}</div>
+                      {p.totalAbsenteeDeduction > 0 && (
+                        <div className="text-xs" style={{ color: 'var(--danger)' }}>-₹{p.totalAbsenteeDeduction.toFixed(2)}</div>
+                      )}
+                    </td>
                     <td>₹{(p.overtimePayBreakdown ?? (p.tier1OTPayBreakdown + p.tier2OTPayBreakdown)).toFixed(2)}</td>
                     <td className="text-primary font-medium">₹{p.totalAllowances.toFixed(2)}</td>
                     <td className={`${styles.amountCol} font-bold text-accent-primary`}>
