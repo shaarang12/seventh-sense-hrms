@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
-import { isSundayDate } from '@/lib/payrollEngine';
 import { Calendar, ChevronDown, Save } from 'lucide-react';
 import styles from './attendance.module.css';
 
@@ -70,12 +69,10 @@ export default function AttendanceMatrix() {
     setLoading(false);
   };
 
-  const isSunday = isSundayDate(selectedDate);
-
   const handleStatusChange = (laborerId, status) => {
     setAttendance(prev => {
       const updated = { ...prev[laborerId], status };
-      if (!isSunday && ['absent', 'sl', 'cl'].includes(status)) {
+      if (['absent', 'sl', 'cl'].includes(status)) {
         updated.overtime = 0;
       }
       return {
@@ -207,13 +204,6 @@ export default function AttendanceMatrix() {
         </button>
       </div>
 
-      {isSunday && (
-        <div className="card" style={{ backgroundColor: 'rgba(59, 130, 246, 0.1)', borderColor: 'var(--accent-primary)', marginBottom: '1.25rem', padding: '0.85rem 1.25rem' }}>
-          <div className="font-semibold" style={{ color: 'var(--accent-primary)' }}>☀️ Sunday (Weekly Off)</div>
-          <div className="text-secondary text-sm">Sundays are treated as non-working days. Any work or hours logged today are automatically credited as Overtime without penalizing regular pay.</div>
-        </div>
-      )}
-
       <div className="card">
         {loading ? (
           <div className="text-center py-8 text-secondary">Loading matrix...</div>
@@ -266,7 +256,7 @@ export default function AttendanceMatrix() {
                           placeholder="0"
                           value={currentOT}
                           onChange={(e) => handleOvertimeChange(laborer.id, e.target.value)}
-                          disabled={!isSunday && ['absent', 'sl', 'cl'].includes(currentStatus)}
+                          disabled={['absent', 'sl', 'cl'].includes(currentStatus)}
                         />
                       </td>
                     </tr>

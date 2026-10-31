@@ -119,24 +119,6 @@ export default function SettingsPage() {
           </div>
           <div className={styles.settingRow}>
             <div>
-              <div className="font-medium">Sunday (Weekly Off)</div>
-              <div className="text-sm text-secondary">Non-working day. Any work logged on Sunday is treated as Overtime.</div>
-            </div>
-          </div>
-          <div className={styles.settingRow}>
-            <div>
-              <div className="font-medium">Monthly Divisor</div>
-              <div className="text-sm text-secondary">Fixed at 26 days (Daily = Monthly Base / 26, Hourly = Daily / 8)</div>
-            </div>
-          </div>
-          <div className={styles.settingRow}>
-            <div>
-              <div className="font-medium">Monthly Salary Calculation</div>
-              <div className="text-sm text-secondary">Subtractive model: Base - Absentee Deductions + Overtime + Allowances</div>
-            </div>
-          </div>
-          <div className={styles.settingRow}>
-            <div>
               <div className="font-medium">Standard Work Day</div>
               <div className="text-sm text-secondary">8 Hours</div>
             </div>
